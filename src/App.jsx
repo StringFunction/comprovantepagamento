@@ -8,12 +8,14 @@ function App() {
   const [count, setCount] = useState(0)
   const [latitude, setLatitude] = useState(0)
   const [longitude, setLongitude] = useState(0)
+  const [mostrarModal, setMostrarModal] = useState(true);
   useEffect(()=>{
     const geo = navigator.geolocation
     geo.getCurrentPosition(
       (position) => {
         setLatitude(position.coords.latitude);
         setLongitude(position.coords.longitude);
+        setMostrarModal(false)
       },
       (error) => {
         console.error("Erro ao obter localização:", error);
@@ -27,6 +29,32 @@ function App() {
   
   return (
     <>
+
+
+{mostrarModal && (
+        <div  className="fixed inset-0 backdrop-blur-md bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-sm">
+            <h2 className="text-xl font-semibold mb-4">Permitir localização?</h2>
+            <p className="mb-4 text-gray-700">
+              Precisamos da sua localização para gerar o comprovante corretamente.
+            </p>
+            <div className="flex flex-col gap-2">
+              <button
+                className="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700"
+       
+              >
+                Permitir acesso
+              </button>
+              <button
+                className="bg-gray-200 py-2 px-4 rounded hover:bg-gray-300"
+                onClick={() => setMostrarModal(false)}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 <div id='conteiner' className='font-boa2'>
     <div class="min-h-screen flex items-center justify-center bg-gray-100 ">
         <div class="bg-purple-700 text-white rounded-xl shadow-lg p-8  w-full text-center">
