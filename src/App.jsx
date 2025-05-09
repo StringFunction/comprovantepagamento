@@ -1,36 +1,128 @@
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { FaFacebook } from "react-icons/fa";
 import { FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { FaLinkedin } from "react-icons/fa6";
 import { ImYoutube2 } from "react-icons/im";
 
 function App() {
-  const [count, setCount] = useState(0)
   const [latitude, setLatitude] = useState(0)
   const [longitude, setLongitude] = useState(0)
   const [mostrarModal, setMostrarModal] = useState(true);
-  useEffect(()=>{
-    const geo = navigator.geolocation
-    geo.getCurrentPosition(
-      (position) => {
-        setLatitude(position.coords.latitude);
-        setLongitude(position.coords.longitude);
-        setMostrarModal(false)
-      },
-      (error) => {
-        console.error("Erro ao obter localização:", error);
-      }
-    );
-  })
-  console.log(`https://www.google.com/maps?q=${latitude},${longitude}`);
-  const minha = () => {
-    window.location = `https://www.google.com/maps?q=${latitude},${longitude}`
-  }
+  const [isClicked, setIsClicked] = useState(false); // Estado que controla o clique
+  const [Remetente, setRemetente] = useState(null)
+  const [Destinatario, setDestinatario] = useState(null)
+  const [Banco, setBanco] = useState(null)
+  const [Id, setId] = useState(null)
+  const [valor, setvalor] = useState(null)
+  const [data_atual] = useState(new Date)  
+  const dia = String(data_atual.getDate()).padStart(2, "0")
+  const mes =  data_atual.getMonth()
+  const ano =  data_atual.getFullYear()
+  const hora = String(data_atual.getHours()).padStart(2, "0")
+  const minuto = String(data_atual.getMinutes()).padStart(2, "0")
+  const segundo = String(data_atual.getSeconds()).padStart(2, "0")
+  console.log(hora);
   
+  
+const meses = {
+  1: "Janeiro",
+  2: "Fevereiro",
+  3: "Março",
+  4: "Abril",
+  5: "Maio",
+  6: "Junho",
+  7: "Julho",
+  8: "Agosto",
+  9: "Setembro",
+  10: "Outubro",
+  11: "Novembro",
+  12: "Dezembro"
+};
+
+
+  useEffect(() => {
+    if (!navigator.permissions) {
+      // Fallback se API não for suportada
+      setMostrarModal(true);
+      return;
+    }
+    Permisao()
+  }, []);
+  function Localizar(){
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLatitude(position.coords.latitude);
+            setLongitude(position.coords.longitude);
+            setBanco("260 - Nu Pagamentos S.A")
+            setDestinatario("Francisco Clecio Lima da Silva")
+            setRemetente("Antonio Charles Lima Siqueira")
+            setId("5a9f2c3d7e8a1")
+            setvalor("R$ 15.000,00")
+            setMostrarModal(false);
+          },
+          (error) => {
+            console.error('Erro ao obter localização:', error);
+            alert('Permissão negada ou erro na localização!');
+            Localizar()
+          }
+        );
+      } else {
+        alert('Geolocalização não suportada pelo seu navegador.');
+      }
+}
+
+function Permisao() {
+
+  console.log("TESTANDO PERMISSAO");
+  
+    navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+        if (result.state === 'granted') {
+          // Já tem permissão, pega direto
+          Localizar()
+        } else if (result.state === 'prompt') {
+          // Precisa pedir permissão
+          setMostrarModal(true);
+        } else {
+          // Negado
+          alert('Permissão de localização negada. Ative nas configurações do navegador.');
+          Localizar()
+
+
+        }
+    })
+
+}
+
+
+
+
+  const handleClick = () => {
+    setIsClicked(true); // Força a reexecução do useEffect
+  };
+
+  // Sempre que clicar, tenta obter a localização
+  useEffect(() => {
+    if (isClicked) {
+      Localizar();
+      setIsClicked(false); // Evita reexecução
+    }
+  }, [isClicked]);
+
+  const minha = () => {
+    window.location = `https://www.google.com/maps?q=${latitude},${longitude}`;
+  };
+  const camposecreto = () => {
+    return  <div className={`w-[150px] h-[15px] mt-1   relative left-[570px]`}></div>
+  
+  };
+
+
   return (
     <>
 
-
+{/* 
 {mostrarModal && (
         <div  className="fixed inset-0 backdrop-blur-md bg-black bg-opacity-60 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-sm">
@@ -40,46 +132,41 @@ function App() {
             </p>
             <div className="flex flex-col gap-2">
               <button
-                className="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700"
+                className="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700"   onClick={handleClick}
        
               >
                 Permitir acesso
               </button>
-              <button
-                className="bg-gray-200 py-2 px-4 rounded hover:bg-gray-300"
-                onClick={() => setMostrarModal(false)}
-              >
-                Cancelar
-              </button>
             </div>
           </div>
         </div>
-      )}
+      )} */}
+
 <div id='conteiner' className='font-boa2'>
-    <div class="min-h-screen flex items-center justify-center bg-gray-100 ">
-        <div class="bg-purple-700 text-white rounded-xl shadow-lg p-8  w-full text-center">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 ">
+        <div className="bg-purple-700 text-white rounded-xl shadow-lg p-8  w-[600px] text-center">
         
     
-          <h1 class="text-3xl font-bold tracking-widest mb-2">NUBANK</h1>
-          <p class="text-lg font-medium">Comprovante de Transferência</p>
+          <h1 className="text-3xl font-bold tracking-widest mb-2">NUBANK</h1>
+          <p className="text-lg font-medium">Comprovante de Transferência</p>
 
-          <div class="my-6">
-            <p class="text-sm text-gray-200">Valor transferido</p>
-            <p class="text-3xl font-bold text-white">R$ 1.000,00</p>
+          <div className="my-6">
+            <p className="text-sm text-gray-200">Valor transferido</p>
+            {valor ?  <p className="text-3xl font-bold text-white">{valor}</p>  : camposecreto()}
+        
           </div>
-
-          <p class="text-sm text-gray-200">29 de Abril de 2025 às 15:36:40</p>
-
-        
-          <div class="border-t border-purple-300 my-6"></div>
+          <p className="text-sm text-gray-200">{dia} de {meses[mes]} de {ano} às {hora}:{minuto}:{segundo}</p>
 
         
-          <div class=" text-sm text-gray-100 space-y-2">
-            <p><strong>Remetente:</strong> João da Silva</p>
-            <p><strong>Destinatário:</strong> Maria Oliveira</p>
-            <p><strong>Banco:</strong> 260 - Nu Pagamentos S.A</p>
+          <div className="border-t border-purple-300 my-6"></div>
+
+        
+          <div className=" text-sm text-gray-100 space-y-2">
+            <p><strong>Remetente:</strong>{Remetente ? Remetente : camposecreto()}</p>
+            <p><strong>Destinatário:</strong> {Destinatario ? Destinatario : camposecreto()}</p>
+            <p><strong>Banco:</strong> {Banco ? Banco : camposecreto()}</p>
             <p><strong>Tipo:</strong> Transferência PIX</p>
-            <p><strong>ID Transação:</strong> 5a9f2c3d7e8a1</p>
+            <p><strong>ID Transação:</strong> {Id ? Id : camposecreto()}</p>
           </div>
         </div>
     </div>
@@ -137,7 +224,6 @@ function App() {
           <ImYoutube2 className="w-6 h-6"></ImYoutube2 >
           <FaFacebook className="w-6 h-6"></FaFacebook >
           <FaInstagram className="w-6 h-6"></FaInstagram>
-      
           <FaXTwitter className="w-6 h-6"></FaXTwitter>
 
         </div>
